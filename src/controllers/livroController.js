@@ -57,6 +57,16 @@ class LivroController {
       res.status(500).json({ message: error.message })
     }
   }
+
+  static async getByEditora(req, res) {
+    try {
+      const editora = req.query.editora
+      const livroEditora = await livro.find({ editora: editora })
+      res.status(200).json(livroEditora)
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  }
 };
 
 export default LivroController;
