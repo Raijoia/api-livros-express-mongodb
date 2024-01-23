@@ -1,6 +1,7 @@
 import express from "express";
 import conectar from "./config/dbConnect.js";
 import routes from "./routes/index.js";
+import tratamentoErros from "./middleware/tratamentoErros.js";
 
 const conexao = await conectar();
 
@@ -14,5 +15,9 @@ conexao.once("open", () => {
 
 const app = express();
 routes(app);
+
+// middleware para tratar erros
+// eslint-disable-next-line no-unused-vars
+app.use(tratamentoErros);
 
 export default app;
