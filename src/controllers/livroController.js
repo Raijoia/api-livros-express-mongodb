@@ -1,3 +1,4 @@
+import Erro404 from "../erros/Erro404.js";
 import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
@@ -15,7 +16,11 @@ class LivroController {
     try {
       const id = req.params.id;
       const livroId = await livro.findById(id);
-      res.status(200).json(livroId);
+      if( livroId !== null) {
+        res.status(200).json(livroId);
+      } else {
+        next(new Erro404(`Livro com id:${id} não encontrado`));
+      }
     } catch (error) {
       next(error);
     }
@@ -26,13 +31,17 @@ class LivroController {
 
     try {
       const autorEncontrado = await autor.findById(novoLivro.autor);
-      const livroCompleto = { ...novoLivro, autor: { ...autorEncontrado?._doc } };
-      res
-        .status(201)
-        .json({
-          message: "Livro adicionado com sucesso!",
-          livro: livroCompleto,
-        });
+      if (autorEncontrado === null) {
+        next(new Erro404(`Autor com id:${novoLivro.autor} não encontrado`));
+      } else {
+        const livroCompleto = { ...novoLivro, autor: { ...autorEncontrado?._doc } };
+        res
+          .status(201)
+          .json({
+            message: "Livro adicionado com sucesso!",
+            livro: livroCompleto,
+          });
+      }
     } catch (error) {
       next(error);
     }
@@ -41,8 +50,12 @@ class LivroController {
   static async atualizarLivro(req, res, next) {
     try {
       const id = req.params.id;
-      await livro.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: `Livro do id ${id} atualizado` });
+      const livroEncontrado = await livro.findByIdAndUpdate(id, req.body);
+      if (livroEncontrado === null) {
+        next(new Erro404(`Livro com id:${id} não encontrado`));
+      } else {
+        res.status(200).json({ message: `Livro do id ${id} atualizado` });
+      }
     } catch (error) {
       next(error);
     }
@@ -51,8 +64,12 @@ class LivroController {
   static async deleterId(req, res, next) {
     try {
       const id = req.params.id;
-      await livro.findByIdAndDelete(id);
-      res.status(200).json({ message: `Livro do id ${id} deletado` });
+      const livroEncontrado = await livro.findByIdAndDelete(id);
+      if (livroEncontrado === null) {
+        next(new Erro404(`Livro com id:${id} não encontrado`));
+      } else {
+        res.status(200).json({ message: `Livro do id ${id} deletado` });
+      }
     } catch (error) {
       next(error);
     }
@@ -62,7 +79,11 @@ class LivroController {
     try {
       const editora = req.query.editora;
       const livroEditora = await livro.find({ editora: editora });
-      res.status(200).json(livroEditora);
+      if (livroEditora === null) {
+        next(new Erro404(`Livro com editora:${editora} não encontrado`));
+      } else {
+        res.status(200).json(livroEditora);
+      }
     } catch (error) {
       next(error);
     }

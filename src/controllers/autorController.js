@@ -1,3 +1,4 @@
+import Erro404 from "../erros/Erro404.js";
 import { autor } from "../models/Autor.js";
 
 class AutorController {
@@ -17,7 +18,7 @@ class AutorController {
       if (autorId !== null) {
         res.status(200).json(autorId);
       } else {
-        res.status(404).json({ message: `Autor com id:${id} não encontrado` });
+        next(new Erro404(`Autor com id:${id} não encontrado`));
       }
     } catch (error) {
       next(error);
@@ -38,8 +39,12 @@ class AutorController {
   static async atualizarAutor(req, res, next) {
     try {
       const id = req.params.id;
-      await autor.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: `Livro do id ${id} atualizado` });
+      const autorEncontrado = await autor.findByIdAndUpdate(id, req.body);
+      if (autorEncontrado === null) {
+        next(new Erro404(`Autor com id:${id} não encontrado`));
+      } else {
+        res.status(200).json({ message: `Livro do id ${id} atualizado` });
+      }
     } catch (error) {
       next(error);
     }
@@ -48,8 +53,12 @@ class AutorController {
   static async deleterId(req, res, next) {
     try {
       const id = req.params.id;
-      await autor.findByIdAndDelete(id);
-      res.status(200).json({ message: `Autor do id ${id} deletado` });
+      const autorEncontrado =  await autor.findByIdAndDelete(id);
+      if (autorEncontrado === null) {
+        next(new Erro404(`Autor com id:${id} não encontrado`));
+      } else {
+        res.status(200).json({ message: `Autor do id ${id} deletado` });
+      }
     } catch (error) {
       next(error);
     }
