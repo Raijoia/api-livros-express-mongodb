@@ -1,1 +1,18 @@
 GET http://localhost:8080/autores/659593061e28d2beedef5145
+
+###
+
+POST http://localhost:8080/autores
+
+{
+    nacionalidade: "fsdfsdf",
+}
+
+
+### 
+
+POST http://localhost:8080/livros
+
+{
+    titulo: "dsfhsdf"
+}

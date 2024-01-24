@@ -1,12 +1,12 @@
 import { autor } from "../models/Autor.js";
 
 class AutorController {
-  static async getAll(req, res) {
+  static async getAll(req, res, next) {
     try {
       const listaAutores = await autor.find({});
       res.status(200).json(listaAutores);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      next(error);
     }
   }
 

@@ -26,7 +26,7 @@ class LivroController {
 
     try {
       const autorEncontrado = await autor.findById(novoLivro.autor);
-      const livroCompleto = { ...novoLivro, autor: { ...autorEncontrado._doc } };
+      const livroCompleto = { ...novoLivro, autor: { ...autorEncontrado?._doc } };
       res
         .status(201)
         .json({

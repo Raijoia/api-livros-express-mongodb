@@ -5,11 +5,19 @@ function tratamentoErros(error, req, res, next) {
   if (error instanceof mongoose.Error.CastError) {
     res
       .status(400)
-      .json({ message: "Um ou mais dados fornecidos estão incorretos" });
+      .send({ message: "Um ou mais dados fornecidos estão incorretos" });
+  } else if (error instanceof mongoose.Error.ValidationError) {
+    const mensagensErros = Object.values(error.errors)
+      .map((erro) => erro.message)
+      .join("; ");
+
+    res.status(400).send({
+      message: `Houve um erro de validação de dados: ${mensagensErros}`,
+    });
   } else {
     res
       .status(500)
-      .json({ message: `Erro interno do servidor, ${error.message}` });
+      .send({ message: `Erro interno do servidor, ${error.message}` });
   }
 }
 
