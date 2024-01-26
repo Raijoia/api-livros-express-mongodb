@@ -75,10 +75,17 @@ class LivroController {
     }
   }
 
-  static async getByEditora(req, res, next) {
+  static async getByFilter(req, res, next) {
     try {
-      const editora = req.query.editora;
-      const livroEditora = await livro.find({ editora: editora });
+      const { editora, titulo } = req.query;
+
+      const busca = {};
+
+      if (editora) busca.editora = editora;
+      if (titulo) busca.titulo = titulo;
+
+      const livroEditora = await livro.find(busca);
+
       if (livroEditora === null) {
         next(new Erro404(`Livro com editora:${editora} não encontrado`));
       } else {
