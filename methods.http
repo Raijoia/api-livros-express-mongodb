@@ -1,4 +1,4 @@
-GET http://localhost:8080/livros/busca?editora=Classicos
+GET http://localhost:8080/livros/busca?titulo=aneis
 
 ###
 
