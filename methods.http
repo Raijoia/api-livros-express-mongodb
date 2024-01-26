@@ -1,4 +1,4 @@
-GET http://localhost:8080/livros?limite=-1
+GET http://localhost:8080/livros
 
 ###
 
