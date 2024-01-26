@@ -1,4 +1,4 @@
-GET http://localhost:8080/livros/busca?titulo=aneis
+GET http://localhost:8080/livros/busca?titulo=a
 
 ###
 

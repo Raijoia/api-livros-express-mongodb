@@ -77,24 +77,46 @@ class LivroController {
 
   static async getByFilter(req, res, next) {
     try {
-      const { editora, titulo } = req.query;
+      const busca = await processaBusca(req.query);
 
-      const busca = {};
+      if(busca !== null) {
+        const livroResultado = await livro.find(busca).populate("autor");
 
-      if (editora) busca.editora = editora;
-      if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
-
-      const livroEditora = await livro.find(busca);
-
-      if (livroEditora === null) {
-        next(new Erro404(`Livro com editora:${editora} não encontrado`));
+        res.status(200).send(livroResultado);
       } else {
-        res.status(200).json(livroEditora);
+        res.status(200).send([]);
       }
     } catch (error) {
       next(error);
     }
   }
+}
+
+async function processaBusca(req) {
+  const { editora, titulo, minPagina, maxPagina, nomeAutor } = req;
+
+  let busca = {};
+
+  if (editora) busca.editora = editora;
+  if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
+
+  if (minPagina || maxPagina) busca.numeroPaginas = {};
+
+  if (minPagina) busca.numeroPaginas.$gte = minPagina;
+  if (maxPagina) busca.numeroPaginas.$lte = maxPagina;
+
+  if (nomeAutor) {
+    const autorEncontrado = await autor.findOne({ nome: nomeAutor });
+
+    if (autorEncontrado !== null) {
+      busca.autor = autorEncontrado?._id;
+    } else {
+      busca = null;
+    }
+
+  }
+
+  return busca;
 }
 
 export default LivroController;
